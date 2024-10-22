@@ -6,7 +6,7 @@ app = Flask(__name__)
 # Connect to the PostgreSQL database
 def connect_db():
     return psycopg2.connect(
-        database="DataBasehodilenko",
+        database="DataBaseHodilenko",
         user="postgres",  # Ваше ім'я користувача PostgreSQL
         password="admin",  # Ваш пароль PostgreSQL
         host="localhost",
