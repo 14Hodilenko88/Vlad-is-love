@@ -1,10 +1,11 @@
+
 import datetime
 from flask import Flask, request, jsonify
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/school'  # Змініть на свої дані
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/DataBaseHodilenko'  # Змініть на свої дані
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
