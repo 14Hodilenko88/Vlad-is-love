@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_cors import CORS
+from flask import render_template
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/DataBaseHodilenko'  # Змініть на свої дані
@@ -13,6 +14,10 @@ class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     enrollment_date = db.Column(db.Date, nullable=False)
+
+@app.route('/')
+def index():
+    return render_template('index.html')  # Рендеримо шаблон
 
 @app.route('/api/students', methods=['GET'])
 def get_students():
