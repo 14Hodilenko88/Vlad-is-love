@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Студенти</title>
+    <script>
+        async function fetchStudents() {
+            const response = await fetch('/api/students');
+            const students = await response.json();
+            const list = document.getElementById('student-list');
+            list.innerHTML = '';
+            students.forEach(student => {
+                const item = document.createElement('li');
+                item.textContent = `${student.name} (ID: ${student.student_id})`;
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Видалити';
+                deleteBtn.onclick = () => deleteStudent(student.student_id);
+                item.appendChild(deleteBtn);
+                list.appendChild(item);
+            });
+        }
+
+        async function addStudent() {
+            const name = document.getElementById('name').value;
+            const enrollmentDate = document.getElementById('enrollment_date').value;
+            await fetch('/api/students', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, enrollment_date: enrollmentDate })
+            });
+            fetchStudents();
+        }
+
+        async function deleteStudent(id) {
+            await fetch(`/api/students/${id}`, { method: 'DELETE' });
+            fetchStudents();
+        }
+
+        window.onload = fetchStudents;
+    </script>
+</head>
+<body>
+    <h1>Студенти</h1>
+    <ul id="student-list"></ul>
+
+    <h2>Додати студента</h2>
+    <input type="text" id="name" placeholder="Ім'я студента" required>
+    <input type="date" id="enrollment_date" required>
+    <button onclick="addStudent()">Додати</button>
+    <h2>Видалити студента</h2>
+    <input type="text" id="name" placeholder="Ім'я студента" required>
+    <input type="date" id="enrollment_date" required>
+    <button onclick="fetchStudents()">Видалити</button>
+</body>
+</html>
