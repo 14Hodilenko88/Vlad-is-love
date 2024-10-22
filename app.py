@@ -1,46 +1,39 @@
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from flask_cors import CORS
-from flask import render_template
+from flask import Flask, jsonify, request, render_template
+import psycopg2
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost/DataBaseHodilenko'  # Змініть на свої дані
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-CORS(app)
 
-class Student(db.Model):
-    student_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    enrollment_date = db.Column(db.Date, nullable=False)
+# Connect to the PostgreSQL database
+def connect_db():
+    return psycopg2.connect(
+        database="DataBasehodilenko",
+        user="postgres",  # Ваше ім'я користувача PostgreSQL
+        password="admin",  # Ваш пароль PostgreSQL
+        host="localhost",
+        port="5432"
+    )
 
+# Home route to render the UI
 @app.route('/')
-def index():
-    return render_template('index.html')  # Рендеримо шаблон
+def home():
+    return render_template('index.html')
 
-@app.route('/api/students', methods=['GET'])
-def get_students():
-    students = Student.query.all()
-    return jsonify([{'student_id': s.student_id, 'name': s.name, 'enrollment_date': s.enrollment_date.isoformat()} for s in students])
-
-@app.route('/api/students', methods=['POST'])
-def add_student():
-    data = request.get_json()
-    new_student = Student(name=data['name'], enrollment_date=datetime.strptime(data['enrollment_date'], '%Y-%m-%d').date())
-    db.session.add(new_student)
-    db.session.commit()
-    return jsonify({'student_id': new_student.student_id}), 201
-
-@app.route('/api/students/<int:student_id>', methods=['DELETE'])
-def delete_student(student_id):
-    student = Student.query.get_or_404(student_id)
-    db.session.delete(student)
-    db.session.commit()
-    return jsonify({'message': 'Student deleted successfully'})
+# Get all documents
+@app.route('/api/documents', methods=['GET'])
+def get_documents():
+    connection = connect_db()
+    cursor = connection.cursor()
+    query = '''
+    SELECT d.student_id, d.name, d.enrollment_data
+    
+    '''
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    columns = ['student_id', 'name', 'enrollment_data']
+    documents = [dict(zip(columns, row)) for row in rows]
+    cursor.close()
+    connection.close()
+    return jsonify(documents)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # Створити таблиці, якщо їх немає
     app.run(debug=True)
-    
