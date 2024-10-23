@@ -1,30 +1,23 @@
 from flask import Flask, jsonify, request, render_template
-import psycopg2
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-
-
 app = Flask(__name__)
-db = SQLAlchemy(app)  # Ініціалізація SQLAlchemy
 
+# Налаштування URI бази даних
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/school'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+db = SQLAlchemy(app)
 
 class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     enrollment_date = db.Column(db.Date, nullable=False)
 
-
-# Connect to the PostgreSQL database
-def connect_db():
-    return psycopg2.connect(
-        database="school",
-        user="postgres",  # Ваше ім'я користувача PostgreSQL
-        password="admin",  # Ваш пароль PostgreSQL
-        host="127.0.0.1",
-        port="5432"
-    )
+# Створення таблиць
+with app.app_context():
+    db.create_all()  # Запустіть один раз для створення таблиць
 
 # Home route to render the UI
 @app.route('/')
@@ -34,18 +27,8 @@ def home():
 # Get all students
 @app.route('/api/students', methods=['GET'])
 def get_students():
-    connection = connect_db()
-    cursor = connection.cursor()
-    query = '''
-    SELECT d.student_id, t.name, d.enrollment_data
-    
-    '''
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    columns = ['student_id', 'name', 'enrollment_data']
-    documents = [dict(zip(columns, row)) for row in rows]
-    cursor.close()
-    connection.close()
+    students = Student.query.all()
+    documents = [{'student_id': student.student_id, 'name': student.name, 'enrollment_date': student.enrollment_date} for student in students]
     return jsonify(documents)
 
 @app.route('/students')
@@ -64,10 +47,12 @@ def add_student():
     db.session.commit()  # Зберігаємо зміни в базі даних
     return jsonify({'student_id': new_student.student_id}), 201
 
-new_student = Student(name='Ivan Pupko', enrollment_date='2024-10-02')
-db.session.add(new_student)
-db.session.commit()
-
+# Додати початкового студента
+with app.app_context():
+    if not Student.query.filter_by(name='Ivan Pupko').first():
+        new_student = Student(name='Ivan Pupko', enrollment_date=datetime(2024, 10, 2))
+        db.session.add(new_student)
+        db.session.commit()
 
 if __name__ == '__main__':
     app.run(debug=True)
