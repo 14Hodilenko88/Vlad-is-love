@@ -18,9 +18,9 @@ def connect_db():
 def home():
     return render_template('index.html')
 
-# Get all documents
-@app.route('/api/documents', methods=['GET'])
-def get_documents():
+# Get all students
+@app.route('/api/students', methods=['GET'])
+def get_students():
     connection = connect_db()
     cursor = connection.cursor()
     query = '''

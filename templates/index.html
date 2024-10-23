@@ -4,35 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Список студентів</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            color: white;
+            background-color: red;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Список студентів</h1>
-        <table id="documents-table">
-            <thead>
-                <tr>
-                    <th>student_id</th>
-                    <th>name</th>
-                    <th>enrollement_date</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
 
-    <script>
-        fetch('/api/documents')
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.getElementById('documents-table').getElementsByTagName('tbody')[0];
-                data.forEach(document => {
-                    const row = tableBody.insertRow();
-                    row.insertCell(0).innerText = document.student_id;
-                    row.insertCell(1).innerText = document.name;
-                    row.insertCell(2).innerText = document.enrollevent_date;
-                });
-            })
-            .catch(error => console.error('Error fetching documents:', error));
-    </script>
+<h1>Список студентів</h1>
+
+<form id="studentForm">
+    <input type="text" id="studentName" placeholder="Ім'я студента" required>
+    <button type="submit">Додати студента</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Ім'я студента</th>
+            <th>Дія</th>
+        </tr>
+    </thead>
+    <tbody id="studentList"></tbody>
+</table>
+
+<script>
+    const studentForm = document.getElementById('studentForm');
+    const studentList = document.getElementById('studentList');
+
+    // Функція для додавання нового студента
+    studentForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const studentName = document.getElementById('studentName').value;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${studentName}</td>
+                         <td><button class="deleteBtn">Видалити</button></td>`;
+        
+        studentList.appendChild(row);
+        document.getElementById('studentName').value = '';
+
+        // Додавання функції видалення студента
+        row.querySelector('.deleteBtn').addEventListener('click', function() {
+            studentList.removeChild(row);
+        });
+    });
+</script>
+
 </body>
 </html>
