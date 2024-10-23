@@ -12,9 +12,9 @@
         <table id="documents-table">
             <thead>
                 <tr>
-                    <th>Student_id</th>
-                    <th>Name</th>
-                    <th>Enrollment_data</th>
+                    <th>student_id</th>
+                    <th>name</th>
+                    <th>enrollement_date</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,9 +30,9 @@
                 const tableBody = document.getElementById('documents-table').getElementsByTagName('tbody')[0];
                 data.forEach(document => {
                     const row = tableBody.insertRow();
-                    row.insertCell(0).innerText = document.Student_id;
-                    row.insertCell(1).innerText = document.Name;
-                    row.insertCell(2).innerText = document.Enrollment_data;
+                    row.insertCell(0).innerText = document.student_id;
+                    row.insertCell(1).innerText = document.name;
+                    row.insertCell(2).innerText = document.enrollevent_date;
                 });
             })
             .catch(error => console.error('Error fetching documents:', error));
