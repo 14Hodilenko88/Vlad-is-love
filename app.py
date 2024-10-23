@@ -35,7 +35,7 @@ def get_students():
     connection = connect_db()
     cursor = connection.cursor()
     query = '''
-    SELECT d.student_id, d.name, d.enrollment_data
+    SELECT d.student_id, t.name, d.enrollment_data
     
     '''
     cursor.execute(query)
@@ -45,6 +45,11 @@ def get_students():
     cursor.close()
     connection.close()
     return jsonify(documents)
+
+@app.route('/students')
+def show_students():
+    students = Student.query.all()
+    return render_template('index.html', students=students)
 
 @app.route('/api/students', methods=['POST'])
 def add_student():
