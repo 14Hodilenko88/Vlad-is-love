@@ -1,80 +1,14 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Список студентів</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        button {
-            color: white;
-            background-color: red;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Students List</title>
 </head>
 <body>
-
-<h1>Список студентів</h1>
-
-<form id="studentForm">
-    <input type="text" id="studentName" placeholder="Ім'я студента" required>
-    <button type="submit">Додати студента</button>
-</form>
-
-<table>
-    <thead>
-        <tr>
-            <th>Student_id</th>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Function</th>
-        </tr>
-    </thead>
-    <tbody id="studentList"></tbody>
-</table>
-
-<script>
-    const studentForm = document.getElementById('studentForm');
-    const studentList = document.getElementById('studentList');
-
-    // Функція для додавання нового студента
-    studentForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const studentName = document.getElementById('studentName').value;
-
-        const row = document.createElement('tr');
-        row.innerHTML = `<td></td>
-                        <td>${studentName}</td>
-                        <td></td>
-                        <td><button class="deleteBtn">Видалити</button></td>`;
-        
-        studentList.appendChild(row);
-        document.getElementById('studentName').value = '';
-
-        // Додавання функції видалення студента
-        row.querySelector('.deleteBtn').addEventListener('click', function() {
-            studentList.removeChild(row);
-        });
-    });
-</script>
-
+    <h1>Students List</h1>
+    <ul>
+        {% for student in students %}
+            <li>ID: {{ student.student_id }}, Name: {{ student.name }}, Enrollment Date: {{ student.enrollment_date }}</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
