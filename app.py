@@ -19,7 +19,7 @@ class Student(db.Model):
 # Connect to the PostgreSQL database
 def connect_db():
     return psycopg2.connect(
-        database="DataBaseHodilenko",
+        database="school",
         user="postgres",  # Ваше ім'я користувача PostgreSQL
         password="admin",  # Ваш пароль PostgreSQL
         host="127.0.0.1",
