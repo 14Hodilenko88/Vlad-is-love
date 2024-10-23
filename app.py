@@ -57,6 +57,10 @@ def add_student():
     db.session.commit()  # Зберігаємо зміни в базі даних
     return jsonify({'student_id': new_student.student_id}), 201
 
+new_student = Student(name='Svan Pupko', enrollment_date='2024-10-02')
+db.session.add(new_student)
+db.session.commit()
+
 
 if __name__ == '__main__':
     app.run(debug=True)
