@@ -54,6 +54,14 @@ with app.app_context():
         db.session.add(new_student)
         db.session.commit()
 
+@app.route('/api/students/<int:student_id>', methods=['DELETE'])
+def delete_student(student_id):
+    student = Student.query.get_or_404(student_id)
+    db.session.delete(student)
+    db.session.commit()
+    return jsonify({'message': 'Student deleted'}), 204
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
