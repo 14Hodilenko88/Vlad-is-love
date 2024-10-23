@@ -38,14 +38,19 @@ def show_students():
 
 @app.route('/api/students', methods=['POST'])
 def add_student():
-    data = request.json  # Отримуємо дані з тіла запиту
+    data = request.json
+    if Student.query.get(data['student_id']):
+        return jsonify({'error': 'Student ID must be unique.'}), 400
+
     new_student = Student(
+        student_id=data['student_id'],  # Використовуємо ID, заданий користувачем
         name=data['name'],
         enrollment_date=datetime.strptime(data['enrollment_date'], '%Y-%m-%d')
     )
-    db.session.add(new_student)  # Додаємо нового студента до сесії
-    db.session.commit()  # Зберігаємо зміни в базі даних
+    db.session.add(new_student)
+    db.session.commit()
     return jsonify({'student_id': new_student.student_id}), 201
+
 
 # Додати початкового студента
 with app.app_context():
