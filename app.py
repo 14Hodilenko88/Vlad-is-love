@@ -20,7 +20,7 @@ def connect_db():
         database="DataBaseHodilenko",
         user="postgres",  # Ваше ім'я користувача PostgreSQL
         password="admin",  # Ваш пароль PostgreSQL
-        host="localhost",
+        host="127.0.0.1",
         port="5432"
     )
 
