@@ -49,6 +49,7 @@
 
     <h2>Add Student</h2>
     <form id="add-student-form">
+        <input type="number" id="student_id" placeholder="Student ID" required>
         <input type="text" id="name" placeholder="Student Name" required>
         <input type="date" id="enrollment_date" required>
         <button type="submit">Add Student</button>
@@ -59,6 +60,7 @@
             // Додавання нового студента
             $('#add-student-form').on('submit', function(event) {
                 event.preventDefault();
+                const student_id = $('#student_id').val();
                 const name = $('#name').val();
                 const enrollment_date = $('#enrollment_date').val();
 
@@ -66,24 +68,25 @@
                     url: '/api/students',
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ name: name, enrollment_date: enrollment_date }),
+                    data: JSON.stringify({ student_id: student_id, name: name, enrollment_date: enrollment_date }),
                     success: function(data) {
                         // Додати студента в таблицю
                         $('#students-list').append(
                             `<tr id="student-${data.student_id}">
-                                <td>${data.student_id}</td>
+                                <td>${student_id}</td>
                                 <td>${name}</td>
                                 <td>${enrollment_date}</td>
                                 <td>
-                                    <button class="delete-button" data-id="${data.student_id}">Delete</button>
+                                    <button class="delete-button" data-id="${student_id}">Delete</button>
                                 </td>
                             </tr>`
                         );
+                        $('#student_id').val('');
                         $('#name').val('');
                         $('#enrollment_date').val('');
                     },
                     error: function() {
-                        alert('Error adding student.');
+                        alert('Error adding student. Make sure the ID is unique.');
                     }
                 });
             });
