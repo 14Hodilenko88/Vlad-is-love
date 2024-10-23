@@ -1,14 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Список студентів</title>
+    <title>Students List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Список студентів</h1>
-    <ul>
+    <h1>Students List</h1>
+
+    <ul id="students-list">
         {% for student in students %}
-            <li>ID: {{ student.student_id }}, Name: {{ student.name }}, Enrollment Date: {{ student.enrollment_date }}</li>
+            <li id="student-{{ student.student_id }}">
+                ID: {{ student.student_id }}, Name: {{ student.name }}, Enrollment Date: {{ student.enrollment_date }}
+                <button class="delete-button" data-id="{{ student.student_id }}">Delete</button>
+            </li>
         {% endfor %}
     </ul>
+
+    <h2>Add Student</h2>
+    <form id="add-student-form">
+        <input type="text" id="name" placeholder="Student Name" required>
+        <input type="date" id="enrollment_date" required>
+        <button type="submit">Add Student</button>
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            // Додавання нового студента
+            $('#add-student-form').on('submit', function(event) {
+                event.preventDefault();
+                const name = $('#name').val();
+                const enrollment_date = $('#enrollment_date').val();
+
+                $.ajax({
+                    url: '/api/students',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ name: name, enrollment_date: enrollment_date }),
+                    success: function(data) {
+                        // Додати студента в список
+                        $('#students-list').append(
+                            `<li id="student-${data.student_id}">
+                                ID: ${data.student_id}, Name: ${name}, Enrollment Date: ${enrollment_date}
+                                <button class="delete-button" data-id="${data.student_id}">Delete</button>
+                            </li>`
+                        );
+                        $('#name').val('');
+                        $('#enrollment_date').val('');
+                    },
+                    error: function() {
+                        alert('Error adding student.');
+                    }
+                });
+            });
+
+            // Видалення студента
+            $(document).on('click', '.delete-button', function() {
+                const studentId = $(this).data('id');
+
+                $.ajax({
+                    url: `/api/students/${studentId}`,
+                    type: 'DELETE',
+                    success: function() {
+                        $(`#student-${studentId}`).remove();
+                    },
+                    error: function() {
+                        alert('Error deleting student.');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
